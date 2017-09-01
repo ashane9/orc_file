@@ -5,7 +5,7 @@ class OrcSchema
   end
 
   def add_column(column_name, data_type)
-    case data_type.to_sym
+    case data_type.downcase.to_sym
       when :integer
         type = TypeDescription.createLong()
       when :datetime, :time

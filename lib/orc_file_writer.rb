@@ -9,8 +9,9 @@ class OrcFileWriter
     @table_schema = table_schema
     @data_set = data_set
     @orc_options.define_table_schema(table_schema)
-    path = Path.new(path)
-    @writer = OrcFile.createWriter(path, @orc_options.orc)
+    path.concat '.orc' unless path.include? '.orc'
+    path_object = Path.new(path)
+    @writer = OrcFile.createWriter(path_object, @orc_options.orc)
   end
 
   def create_row(row)

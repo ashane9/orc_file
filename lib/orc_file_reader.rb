@@ -32,31 +32,6 @@ class OrcFileReader
           orc_row[column_name] = column.vector.first.to_s
       end
     end
-    # orc_row = @orc_options.orc_schema.schema.createRowBatch()
-    # orc_row.size = 1
-    # row.each_with_index do |(key, value), index|
-    #   data_type = @table_schema[key]
-    #   case data_type
-    #     when :integer
-    #       data_for_column = value.to_java(:long)
-    #     when :decimal
-    #       # data_for_column = value.to_d.to_java
-    #       data_for_column = HiveDecimal.create(value.to_d.to_java)
-    #     when :float, :double
-    #       data_for_column = value.to_java(:double)
-    #     when :datetime, :time
-    #       data_for_column = value.to_time
-    #     when :date
-    #       # hive needs date formated as number of days since epoch (01/01/1970)
-    #       data_for_column = (value.to_time.to_i / 86400)
-    #     when :string
-    #       data_for_column = value.to_s.bytes.to_a
-    #     else
-    #       raise ArgumentError, "column data type #{data_type} not defined"
-    #   end
-    #
-    #   orc_row.cols[index].fill(data_for_column)
-    # end
     orc_row
   end
 
@@ -65,7 +40,7 @@ class OrcFileReader
     @reader.rows.next_batch(row_batch).each do |row|
       read_row(row)
     end
-    # @reader.close
+    @reader.close
   end
 
 end

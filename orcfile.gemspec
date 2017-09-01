@@ -5,8 +5,7 @@ Gem::Specification.new do |spec|
   spec.email = ['andrew.shane@nationwide.com']
 
   spec.summary = 'Reader/writer of Hive ORC files'
-  spec.description = 'This gem allows for the creation and reading of Apache Hive Optimized Row Columnar (ORC) files.'\
-'ORC files are '
+  spec.description = 'This gem allows for the creation and reading of Apache Hive Optimized Row Columnar (ORC) files.'
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.

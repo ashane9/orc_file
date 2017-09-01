@@ -101,7 +101,6 @@ describe OrcFile do
   end
 
   context 'OrcOptions' do
-    # let(:orc_options) {OrcOptions.new}
     before(:each) do
       @orc_options = OrcOptions.new
     end
@@ -361,6 +360,7 @@ describe OrcFile do
       end
 
       it 'will return a hash with the key column6 matching the original data_set float value' do
+        skip('Work in progress')
         expect(@orc_row[:column6]).to be_a_kind_of Float
         expect(@orc_row[:column6]).to eq @data_set[:column6]
       end
@@ -371,17 +371,18 @@ describe OrcFile do
       end
     end
 
-    # context 'read_from_orc' do
-    #   before do
-    #     Dir.glob("#{orc_file_path}*").each {|file| File.delete(file)}
-    #     orc_file_writer.write_to_orc
-    #     orc_file_reader.read_from_orc
-    #   end
-    #
-    #   it 'will read the row from an orc file' do
-    #     expect(orc_file_reader.reader.number_of_rows).to eq 1
-    #   end
-    #
-    # end
+    context 'read_from_orc' do
+      before do
+        skip 'Work in progress'
+        Dir.glob("#{@orc_file_path}*").each {|file| File.chmod(777, file); File.delete(file)}
+        orc_file_writer.write_to_orc
+        @orc_file_reader.read_from_orc
+      end
+
+      it 'will read the row from an orc file' do
+        expect(@orc_file_reader.reader.number_of_rows).to eq 1
+      end
+
+    end
   end
 end
