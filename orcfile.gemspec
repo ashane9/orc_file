@@ -20,4 +20,5 @@ Gem::Specification.new do |spec|
   spec.files = Dir.glob("./lib/**/*.rb") + ['README.md']
 
   spec.add_dependency('rspec')
+  spec.add_dependency('java')
 end
