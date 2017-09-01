@@ -20,11 +20,6 @@ describe OrcFile do
 
     @orc_file_path = 'spec/orc_file.orc'
   end
-  # let(:table_schema) {{:column1 => :integer, :column2 => :datetime, :column3 => :time, :column4 => :date,
-  #                      :column5 => :decimal, :column6 => :float, :column7 => :double, :column8 => :string}}
-  # let(:data_set) {{:column1 => 1, :column2 => DateTime.now, :column3 => Time.now, :column4 => Date.today,
-  #                  :column5 => 1000.01, :column6 => 0.0001, :column7 => 1000.0001, :column8 => 'the string column'}}
-  # let(:orc_file_path) {'spec/orc_file.orc'}
 
   context 'OrcSchema' do
     let(:orc_schema) {OrcSchema.new}
@@ -264,49 +259,36 @@ describe OrcFile do
         expect(orc_row).to be_a_kind_of(VectorizedRowBatch)
       end
 
-      # it 'will convert an Integer to a Java Long and add to the associated row batch defined by the schema' do
       it 'will populate the row batch column defined by the schema for an Integer value' do
         expect(orc_row.cols[0]).to be_a_kind_of(LongColumnVector)
         expect(orc_row.cols[0].vector.first).to eq @data_set[:column1]
       end
 
-      # it 'will convert a DateTime to Java Timestamp and add to the row batch defined by the schema' do
       it 'will populate the row batch column defined by the schema for a DateTime value in epoch millisecond format' do
         expect(orc_row.cols[1]).to be_a_kind_of(TimestampColumnVector)
         expect(orc_row.cols[1].time.first).to eq @data_set[:column2].strftime('%Q').to_i
       end
 
-      # it 'will convert a Time to Java Timestamp and add to the row batch defined by the schema' do
       it 'will populate the row batch column defined by the schema for a Time value in epoch millisecond format' do
         expect(orc_row.cols[2]).to be_a_kind_of(TimestampColumnVector)
         expect(orc_row.cols[2].time.first).to eq @data_set[:column3].strftime('%s%3N').to_i
       end
 
-      # it 'will convert a Date to Java Date and add to the row batch defined by the schema' do
       it 'will populate the row batch column defined by the schema for a Date value in epoch day format' do
         expect(orc_row.cols[3]).to be_a_kind_of(LongColumnVector)
         expect(orc_row.cols[3].vector.first).to eq ((@data_set[:column4] - Date.new(1970,1,1)).to_i)
       end
 
-      # it 'will convert a Decimal to HiveDecimal and add to the row batch defined by the schema' do
       it 'will populate the row batch column defined by the schema for a Decimal value' do
         expect(orc_row.cols[4]).to be_a_kind_of(DecimalColumnVector)
         expect(orc_row.cols[4].vector.first.get_hive_decimal).to eq HiveDecimal.create(@data_set[:column5].to_d.to_java)
       end
 
-      # it 'will convert a Float to Java Double and add to the row batch defined by the schema' do
       it 'will populate the row batch column defined by the schema for a Float value' do
         expect(orc_row.cols[5]).to be_a_kind_of(DoubleColumnVector)
         expect(orc_row.cols[5].vector.first).to eq @data_set[:column6]
       end
 
-      # it 'will convert a Double to Java Double and add to the row batch defined by the schema' do
-      # it 'will populate the row batch column defined by the schema for a Double value' do
-      #   expect(orc_row.cols[6]).to be_a_kind_of(DoubleColumnVector)
-      #   expect(orc_row.cols[6].vector.first).to eq @data_set[:column7]
-      # end
-
-      # it 'will convert a String to Java Long and add to the row batch defined by the schema' do
       it 'will populate the row batch column defined by the schema for a String value' do
         expect(orc_row.cols[6]).to be_a_kind_of(BytesColumnVector)
         expect(orc_row.cols[6].vector.first.to_s).to eq @data_set[:column7]
@@ -327,15 +309,6 @@ describe OrcFile do
   end
 
   context 'OrcFileReader' do
-    # let(:orc_file_writer) {OrcFileWriter.new(@table_schema, @data_set, @orc_file_path)}
-    # let(:orc_file_reader) {OrcFileReader.new(@table_schema, @orc_file_path)}
-    # let(:orc_row) do
-    #   Dir.glob("#{orc_file_path}*").each {|file| File.delete(file)}
-    #   orc_file_writer.write_to_orc
-    #   batch = orc_file_reader.reader.get_schema.createRowBatch()
-    #   orc_file_reader.reader.rows.next_batch(batch)
-    #   orc_file_reader.read_row batch
-    # end
     before(:all) do
       orc_file_writer = OrcFileWriter.new(@table_schema, @data_set, @orc_file_path)
       @orc_file_reader = OrcFileReader.new(@table_schema, @orc_file_path)
@@ -391,11 +364,6 @@ describe OrcFile do
         expect(@orc_row[:column6]).to be_a_kind_of Float
         expect(@orc_row[:column6]).to eq @data_set[:column6]
       end
-
-      # it 'will return a hash with the key column7 matching the original data_set double value' do
-      #   expect(@orc_row[:column7]).to be_a_kind_of Double
-      #   expect(@orc_row[:column7]).to eq @data_set[:column7]
-      # end
 
       it 'will return a hash with the key column8 matching the original data_set string value' do
         expect(@orc_row[:column7]).to be_a_kind_of String
