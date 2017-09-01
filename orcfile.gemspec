@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   end
 
   spec.require_paths = ['./lib']
-  spec.files = Dir.glob("./lib/**/*.rb") + ['README.rdoc']
+  spec.files = Dir.glob("./lib/**/*.rb") + ['README.md']
 
   spec.add_dependency('rspec')
 end
