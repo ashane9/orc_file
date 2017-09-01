@@ -3,6 +3,7 @@ Ruby Gem for creating and reading Optimized Row Columnar (ORC) files.
 This gem can also be paired using the dif_fileio and/or factory_girl.
 
 ## Installation
+Must use jruby.
 
 Add this line to your application's Gemfile:
 
