@@ -19,25 +19,34 @@ class OrcFileWriter
     orc_row.size = 1
     row.each_with_index do |(key, value), index|
       data_type = @table_schema[key]
-      case data_type
-        when :integer
-          data_for_column = value.to_java(:long)
-        when :decimal
-          data_for_column = HiveDecimal.create(value.to_d.to_java)
-        when :float
-          data_for_column = value.to_java(:double)
-        when :datetime, :time
-          data_for_column = value.to_time
-        when :date
-          # hive needs date formated as number of days since epoch (01/01/1970)
-          data_for_column = (value - Date.new(1970,1,1)).to_i
-        when :string
-          data_for_column = value.to_s.bytes.to_a
-        else
-          raise ArgumentError, "column data type #{data_type} not defined"
+      if value.nil?
+        orc_row.cols[index].noNulls = false
+        case data_type
+          when :datetime, :time, :decimal
+            orc_row.cols[index].set(0, value)
+          else
+            orc_row.cols[index].fill_with_nulls
+        end
+      else
+        case data_type
+          when :integer
+            data_for_column = value.to_java(:long)
+          when :decimal
+            data_for_column = HiveDecimal.create(value.to_d.to_java)
+          when :float
+            data_for_column = value.to_java(:double)
+          when :datetime, :time
+            data_for_column = value.to_time
+          when :date
+            # hive needs date formated as number of days since epoch (01/01/1970)
+            data_for_column = (value - Date.new(1970, 1, 1)).to_i
+          when :string
+            data_for_column = value.to_s.bytes.to_a
+          else
+            raise ArgumentError, "column data type #{data_type} not defined"
+        end
+        orc_row.cols[index].fill(data_for_column)
       end
-
-      orc_row.cols[index].fill(data_for_column)
     end
     orc_row
   end

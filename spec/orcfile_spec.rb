@@ -18,7 +18,11 @@ describe OrcFile do
     @data_set ={:column1 => 1, :column2 => DateTime.now, :column3 => Time.now, :column4 => Date.today,
                 :column5 => 1000.01.to_d, :column6 => 0.0005, :column7 => 'the string column'}
 
+    @nil_data_set = {:column1 => nil, :column2 => nil, :column3 => nil, :column4 => nil,
+                     :column5 => nil, :column6 => nil, :column7 => nil}
+
     @orc_file_path = 'spec/orc_file.orc'
+    @orc_nil_data_file_path = 'spec/orc_file_nil_data.orc'
   end
 
   context 'OrcSchema' do
@@ -89,11 +93,11 @@ describe OrcFile do
         it 'will add a Type Description STRING to the orc_schema struct' do
           expect(orc_schema.schema.children.first.category).to eq(TypeDescription::Category.const_get :STRING)
         end
-      end      
+      end
       context('invalid data type') do
         it 'will throw an ArgumentError for an invalid data type' do
           data_type = :invalid
-          expect{orc_schema.add_column('datetime_column', data_type)}.
+          expect {orc_schema.add_column('datetime_column', data_type)}.
               to raise_error(ArgumentError, "column data type #{data_type} not defined")
         end
       end
@@ -120,13 +124,13 @@ describe OrcFile do
       end
 
       it 'will raise a TypeError when table_schema is not a hash' do
-        expect{@orc_options.define_table_schema('not_a_hash')}.
+        expect {@orc_options.define_table_schema('not_a_hash')}.
             to raise_error(TypeError, 'table_schema must be a Hash of {column_name: data_type}')
       end
 
       it 'will raise an ArgumentError when table_schema hash is empty' do
         empty_hash = Hash.new
-        expect{@orc_options.define_table_schema(empty_hash)}.
+        expect {@orc_options.define_table_schema(empty_hash)}.
             to raise_error(ArgumentError, 'table_schema cannot be an empty hash')
       end
 
@@ -205,7 +209,7 @@ describe OrcFile do
       context 'Invalid compression type' do
         it 'will throw an ArgumentError for an invalid compression type' do
           compression_type = 'WRONG'
-          expect{@orc_options.define_compression(compression_type)}.
+          expect {@orc_options.define_compression(compression_type)}.
               to raise_error(ArgumentError,
                              "#{compression_type} is not a valid CompressionKind. Must be one of the following: \n#{CompressionKind.constants}")
         end
@@ -233,6 +237,7 @@ describe OrcFile do
 
   context 'OrcFileWriter' do
     let(:orc_file_writer) {OrcFileWriter.new(@table_schema, @data_set, @orc_file_path)}
+    let(:nil_data_writer) {OrcFileWriter.new(@table_schema, @nil_data_set, @orc_nil_data_file_path)}
     context 'initialize' do
       it 'will initialize instance variable writer as an WriterImpl object' do
         expect(orc_file_writer.writer).to be_a_kind_of(WriterImpl)
@@ -253,45 +258,89 @@ describe OrcFile do
 
     context 'create_row' do
       let(:orc_row) {orc_file_writer.create_row(@data_set)}
+      let(:nil_data_row) {nil_data_writer.create_row(@nil_data_set)}
 
       it 'will create a vectorized row batch for storing the data set' do
         expect(orc_row).to be_a_kind_of(VectorizedRowBatch)
       end
 
-      it 'will populate the row batch column defined by the schema for an Integer value' do
-        expect(orc_row.cols[0]).to be_a_kind_of(LongColumnVector)
-        expect(orc_row.cols[0].vector.first).to eq @data_set[:column1]
+      context 'Integer datatype' do
+        it 'will populate the row batch column defined by the schema for an Integer value' do
+          expect(orc_row.cols[0]).to be_a_kind_of(LongColumnVector)
+          expect(orc_row.cols[0].vector.first).to eq @data_set[:column1]
+        end
+        it 'will populate the row batch column defined by the schema when value is nil' do
+          expect(nil_data_row.cols[0]).to be_a_kind_of(LongColumnVector)
+          expect(nil_data_row.cols[0].isNull[0]).to be_truthy
+        end
       end
 
-      it 'will populate the row batch column defined by the schema for a DateTime value in epoch millisecond format' do
-        expect(orc_row.cols[1]).to be_a_kind_of(TimestampColumnVector)
-        expect(orc_row.cols[1].time.first).to eq @data_set[:column2].strftime('%Q').to_i
+      context 'DateTime datatype' do
+        it 'will populate the row batch column defined by the schema for a DateTime value in epoch millisecond format' do
+          expect(orc_row.cols[1]).to be_a_kind_of(TimestampColumnVector)
+          expect(orc_row.cols[1].time.first).to eq @data_set[:column2].strftime('%Q').to_i
+        end
+        it 'will populate the row batch column defined by the schema when value is nil' do
+          expect(nil_data_row.cols[1]).to be_a_kind_of(TimestampColumnVector)
+          expect(nil_data_row.cols[1].isNull[0]).to be_truthy
+        end
       end
 
-      it 'will populate the row batch column defined by the schema for a Time value in epoch millisecond format' do
-        expect(orc_row.cols[2]).to be_a_kind_of(TimestampColumnVector)
-        expect(orc_row.cols[2].time.first).to eq @data_set[:column3].strftime('%s%3N').to_i
+      context 'Time datatype' do
+        it 'will populate the row batch column defined by the schema for a Time value in epoch millisecond format' do
+          expect(orc_row.cols[2]).to be_a_kind_of(TimestampColumnVector)
+          expect(orc_row.cols[2].time.first).to eq @data_set[:column3].strftime('%s%3N').to_i
+        end
+        it 'will populate the row batch column defined by the schema when value is nil' do
+          expect(nil_data_row.cols[2]).to be_a_kind_of(TimestampColumnVector)
+          expect(nil_data_row.cols[2].isNull[0]).to be_truthy
+        end
       end
 
-      it 'will populate the row batch column defined by the schema for a Date value in epoch day format' do
-        expect(orc_row.cols[3]).to be_a_kind_of(LongColumnVector)
-        expect(orc_row.cols[3].vector.first).to eq ((@data_set[:column4] - Date.new(1970,1,1)).to_i)
+      context 'Date datatype' do
+        it 'will populate the row batch column defined by the schema for a Date value in epoch day format' do
+          expect(orc_row.cols[3]).to be_a_kind_of(LongColumnVector)
+          expect(orc_row.cols[3].vector.first).to eq ((@data_set[:column4] - Date.new(1970, 1, 1)).to_i)
+        end
+        it 'will populate the row batch column defined by the schema when value is nil' do
+          expect(nil_data_row.cols[3]).to be_a_kind_of(LongColumnVector)
+          expect(nil_data_row.cols[3].isNull[0]).to be_truthy
+        end
       end
 
-      it 'will populate the row batch column defined by the schema for a Decimal value' do
-        expect(orc_row.cols[4]).to be_a_kind_of(DecimalColumnVector)
-        expect(orc_row.cols[4].vector.first.get_hive_decimal).to eq HiveDecimal.create(@data_set[:column5].to_d.to_java)
+      context 'Decimal datatype' do
+        it 'will populate the row batch column defined by the schema for a Decimal value' do
+          expect(orc_row.cols[4]).to be_a_kind_of(DecimalColumnVector)
+          expect(orc_row.cols[4].vector.first.get_hive_decimal).to eq HiveDecimal.create(@data_set[:column5].to_d.to_java)
+        end
+        it 'will populate the row batch column defined by the schema when value is nil' do
+          expect(nil_data_row.cols[4]).to be_a_kind_of(DecimalColumnVector)
+          expect(nil_data_row.cols[4].isNull[0]).to be_truthy
+        end
       end
 
-      it 'will populate the row batch column defined by the schema for a Float value' do
-        expect(orc_row.cols[5]).to be_a_kind_of(DoubleColumnVector)
-        expect(orc_row.cols[5].vector.first).to eq @data_set[:column6]
+      context 'Float datatype' do
+        it 'will populate the row batch column defined by the schema for a Float value' do
+          expect(orc_row.cols[5]).to be_a_kind_of(DoubleColumnVector)
+          expect(orc_row.cols[5].vector.first).to eq @data_set[:column6]
+        end
+        it 'will populate the row batch column defined by the schema when value is nil' do
+          expect(nil_data_row.cols[5]).to be_a_kind_of(DoubleColumnVector)
+          expect(nil_data_row.cols[5].isNull[0]).to be_truthy
+        end
       end
 
-      it 'will populate the row batch column defined by the schema for a String value' do
-        expect(orc_row.cols[6]).to be_a_kind_of(BytesColumnVector)
-        expect(orc_row.cols[6].vector.first.to_s).to eq @data_set[:column7]
+      context 'String datatype' do
+        it 'will populate the row batch column defined by the schema for a String value' do
+          expect(orc_row.cols[6]).to be_a_kind_of(BytesColumnVector)
+          expect(orc_row.cols[6].vector.first.to_s).to eq @data_set[:column7]
+        end
+        it 'will populate the row batch column defined by the schema when value is nil' do
+          expect(nil_data_row.cols[6]).to be_a_kind_of(BytesColumnVector)
+          expect(nil_data_row.cols[6].isNull[0]).to be_truthy
+        end
       end
+
     end
 
     context 'write_to_orc' do
