@@ -16,9 +16,9 @@ Gem::Specification.new do |spec|
       "public gem pushes."
   end
 
-  spec.require_paths = ['./lib']
-  spec.files = Dir.glob("./lib/**/*.rb") + ['README.md']
+  spec.require_paths = ['lib']
+  spec.files = Dir.glob("lib/**/*.rb") + Dir.glob("lib/jars/*.jar") + ['README.md']
 
-  spec.add_dependency('rspec')
-  spec.add_dependency('java')
+  spec.add_dependency('rspec', '~>0')
+  spec.add_dependency('java', '~>0')
 end

@@ -1,4 +1,4 @@
-require './lib/orc_schema'
+require 'orc_schema'
 
 class OrcOptions
   attr_reader :orc_schema, :orc

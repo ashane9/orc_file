@@ -1,4 +1,4 @@
-require './lib/orc_options'
+require 'orc_options'
 
 class OrcFileWriter
   attr_reader :writer, :orc_options, :data_set, :table_schema, :output_path
