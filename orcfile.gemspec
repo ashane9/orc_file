@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name = 'orcfile'
-  spec.version = '0.0.1'
+  spec.version = '1.0.0'
   spec.authors = ['Andrew Shane']
   spec.email = ['andrew.shane@nationwide.com']
 
@@ -19,6 +19,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.files = Dir.glob("lib/**/*.rb") + Dir.glob("lib/jars/*.jar") + ['README.md']
 
-  spec.add_dependency('rspec', '~>0')
-  spec.add_dependency('java', '~>0')
+  spec.add_dependency('rspec')
+  spec.add_dependency('java')
 end
