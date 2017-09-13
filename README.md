@@ -20,9 +20,9 @@ Or install it yourself as:
 ## Usage
 ###OrcFileWriter
 To write a file, you will need to initialize the OrcFileWriter class.
-This object needs a table schema, your dataset, and the path to store the file.
+This object needs a table schema, your dataset, the path to store the file, and an optional configuration hash.
     
-    OrcFileWriter.new(table_schema, data_set, path) 
+    OrcFileWriter.new(table_schema, data_set, path, *options={}) 
 ####*table_schema*
 The table_schema must be a hash containing the column name and datatype as the key-value pair.
       
@@ -56,9 +56,20 @@ The path should be the full file path or relative to your working directory. You
 
     path = '/temp/orc_file.orc'
     
+####*options*
+Options is an optional hash parameter containing 5 configurable settings for writing an ORC file.
+   
+   `:stripe_size` defines the size of the stripe, defaulted as 67,108,864 bytes <br>
+   `:row_index_stride` defines the number of rows between row index entries, defaulted as 10,000 <br>
+   `:buffer_size` defines the orc buffer size, defaulted as 262,144 bytes <br>
+   `:compression` defines the compression codec (NONE,ZLIB,SNAPPY,LZO), defaulted as ZLIB. <br>
     
+Define the options parameter has a hash
+    
+    options = {:stripe_size => 70000000, :compression => 'SNAPPY'}
+  
 ###write_to_orc
 Once you have the OrcFileWriter object initialized you must call write_to_orc to write out the file
 
-      OrcFileWriter.new(table_schema, data_set, path).write_to_orc
+      OrcFileWriter.new(table_schema, data_set, path, options).write_to_orc
 

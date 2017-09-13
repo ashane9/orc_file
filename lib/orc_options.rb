@@ -30,10 +30,6 @@ class OrcOptions
     @orc.bufferSize(buffer_size)
   end
 
-  def define_write_mode(write_mode)
-    @orc.mode(write_mode)
-  end
-
   def define_compression(compression)
     begin
       @orc.compress(CompressionKind.valueOf(compression))
@@ -47,7 +43,6 @@ class OrcOptions
     define_row_index_stride(opts[:row_index_stride]) unless opts[:row_index_stride].nil?
     define_buffer_size(opts[:buffer_size]) unless opts[:buffer_size].nil?
     define_compression(opts[:compression]) unless opts[:compression].nil?
-    define_write_mode(opts[:mode]) unless opts[:mode].nil?
   end
 
 end
