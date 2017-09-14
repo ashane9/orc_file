@@ -16,9 +16,11 @@ describe OrcFile do
                     :column5 => :decimal, :column6 => :float, :column7 => :string}
 
     @data_set =[{:column1 => 1, :column2 => DateTime.now, :column3 => Time.now, :column4 => Date.today,
-                :column5 => 1000.01.to_d, :column6 => 0.0005, :column7 => 'the string column'},
+                 :column5 => 1000.01.to_d, :column6 => 0.0005, :column7 => 'the string column'},
+                {:column1 => 52, :column2 => DateTime.now, :column3 => Time.now, :column4 => Date.today,
+                 :column5 => 500.01.to_d, :column6 => 0.1005, :column7 => 'row 3'},
                 {:column1 => nil, :column2 => nil, :column3 => nil, :column4 => nil,
-                     :column5 => nil, :column6 => nil, :column7 => nil}]
+                 :column5 => nil, :column6 => nil, :column7 => nil}]
 
     @orc_file_path = 'spec/orc_file.orc'
     Dir.glob("#{@orc_file_path}*").each {|file| File.delete(file)}
@@ -350,7 +352,7 @@ describe OrcFile do
       end
 
       it 'will write the single row to an orc file' do
-        expect(orc_file_writer.writer.number_of_rows).to eq 2
+        expect(orc_file_writer.writer.number_of_rows).to eq 3
         expect(File).to exist @orc_file_path
       end
     end
@@ -358,16 +360,20 @@ describe OrcFile do
 
   context 'OrcFileReader' do
     before(:all) do
-      orc_file_writer = OrcFileWriter.new(@table_schema, @data_set.first, @orc_file_path)
+      orc_file_writer = OrcFileWriter.new(@table_schema, @data_set, @orc_file_path)
       Dir.glob("#{@orc_file_path}*").each {|file| File.delete(file) if File.exist?(file)}
       orc_file_writer.write_to_orc
       @orc_file_reader = OrcFileReader.new(@table_schema, @orc_file_path)
-      batch = @orc_file_reader.reader.get_schema.createRowBatch()
-      @orc_file_reader.reader.rows.next_batch(batch)
-      @orc_row = @orc_file_reader.read_row batch
     end
 
     context 'initialize' do
+      before(:each) do
+        batch = @orc_file_reader.reader.get_schema.createRowBatch()
+        @orc_file_reader.reader.rows.next_batch(batch)
+        row_index = 0
+        @orc_row = @orc_file_reader.read_row(batch, row_index)
+      end
+
       it 'will initialize instance variable writer as an ReaderImpl object' do
         expect(@orc_file_reader.reader).to be_a_kind_of(ReaderImpl)
       end
@@ -382,6 +388,12 @@ describe OrcFile do
     end
 
     context 'read_row' do
+      before(:each) do
+        batch = @orc_file_reader.reader.get_schema.createRowBatch()
+        @orc_file_reader.reader.rows.next_batch(batch)
+        row_index = 0
+        @orc_row = @orc_file_reader.read_row(batch, row_index)
+      end
 
       it 'will return a hash with the key column1 matching the original data_set integer value' do
         expect(@orc_row[:column1]).to be_a_kind_of Integer
@@ -421,15 +433,15 @@ describe OrcFile do
     end
 
     context 'read_from_orc' do
-      before do
-        skip 'Work in progress'
-        Dir.glob("#{@orc_file_path}*").each {|file| File.chmod(777, file); File.delete(file)}
-        orc_file_writer.write_to_orc
+      before(:each) do
+        # skip 'Work in progress'
+        # Dir.glob("#{@orc_file_path}*").each {|file| File.chmod(777, file); File.delete(file)}
+        # orc_file_writer.write_to_orc
         @orc_file_reader.read_from_orc
       end
 
       it 'will read the row from an orc file' do
-        expect(@orc_file_reader.reader.number_of_rows).to eq 1
+        expect(@orc_file_reader.reader.number_of_rows).to eq 3
       end
 
     end

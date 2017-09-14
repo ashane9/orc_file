@@ -1,5 +1,5 @@
 =ORCFILE
-Ruby Gem for writing Apaache Optimized Row Columnar (ORC) files.
+Ruby Gem for reading and writing Apache Optimized Row Columnar (ORC) files.
 This gem can also be paired using the dif_fileio plugin for sequel and/or factory_girl gem.
 
 ==Installation
@@ -73,3 +73,27 @@ Once you have the OrcFileWriter object initialized you must call write_to_orc to
 
       OrcFileWriter.new(table_schema, data_set, path, options).write_to_orc
 
+===+OrcFileReader+
+To read a file, you will need to initialize the OrcFileReader class.
+This object needs a table schema,  and the path of the file to be read.
+
+    OrcFileReader.new(table_schema, path)
+====_table_schema_
+The table_schema must be a hash containing the column name and datatype as the key-value pair.
+
+Valid datatypes are:
+- integer
+- decimal
+- float
+- date
+- datetime
+- time
+- string
+
+
+    table_schema = {:id => :integer, :amount => :decimal, :rate => :float}
+
+====_path_
+The path should be the full file path or relative to your working directory. You must also specify the file name.
+
+    path = '/temp/orc_file.orc'
