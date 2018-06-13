@@ -7,7 +7,7 @@ Must use jruby.
 
 Add this line to your application's Gemfile:
 
-    gem 'orcfile'
+    gem 'orc_file'
 
 And then execute:
 
@@ -15,7 +15,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install orcfile
+    $ gem install orc_file
 
 ==Usage
 ===+OrcFileWriter+
