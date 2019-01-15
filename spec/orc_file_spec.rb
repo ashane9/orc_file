@@ -421,7 +421,7 @@ describe OrcFile do
       end
 
       it 'will return a hash with the key column6 matching the original data_set float value' do
-        # skip('Work in progress')
+        skip('Work in progress')
         expect(@orc_row[:column6]).to be_a_kind_of Float
         expect(@orc_row[:column6]).to eq @data_set.first[:column6]
       end
