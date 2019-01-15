@@ -1,6 +1,6 @@
 =ORCFILE
 Ruby Gem for reading and writing Apache Optimized Row Columnar (ORC) files.
-This gem can also be paired using the dif_fileio plugin for sequel and/or factory_girl gem.
+This gem can also be paired using the factory_girl gem.
 
 ==Installation
 Must use jruby.
