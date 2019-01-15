@@ -3,7 +3,14 @@ Gem::Specification.new do |spec|
   spec.version = '1.0.0'
   spec.authors = ['Andrew Shane']
   spec.email = ['ashane9@gmail.com']
-  spec.metadata    = { "source_code_uri" => "https://github.com/ashane9/orc_file" }
+  spec.metadata['source_code_uri'] = 'https://github.com/ashane9/orc_file'
+
+  if spec.respond_to?(:metadata)
+    spec.metadata['allowed_push_host'] = "https://rubygems.org"
+  else
+    raise "RubyGems 2.0 or newer is required to protect against " \
+      "public gem pushes."
+  end
 
   spec.summary = 'Reader/writer of Hive ORC files'
   spec.description = 'This gem allows for the creation and reading of Apache Hive Optimized Row Columnar (ORC) files.'
