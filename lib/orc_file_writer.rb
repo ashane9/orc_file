@@ -41,8 +41,8 @@ class OrcFileWriter
             # hive needs date formated as number of days since epoch (01/01/1970)
             data_for_column = (value - Date.new(1970, 1, 1)).to_i
           when :string
-            orc_row.cols[index].initBuffer(value.to_s.bytes.to_a.size)
-            data_for_column = value.to_s.bytes
+            orc_row.cols[index].initBuffer(value.to_s.to_java_bytes.to_a.size)
+            data_for_column = value.to_s.to_java_bytes
           else
             raise ArgumentError, "column data type #{data_type} not defined"
         end

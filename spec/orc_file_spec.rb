@@ -19,6 +19,8 @@ describe OrcFile do
                  :column5 => 1000.01.to_d, :column6 => 0.0005, :column7 => 'the string column'},
                 {:column1 => 52, :column2 => DateTime.now, :column3 => Time.now, :column4 => Date.today,
                  :column5 => 500.01.to_d, :column6 => 0.1005, :column7 => 'row 3'},
+                 {:column1 => 9714, :column2 => DateTime.now, :column3 => Time.now, :column4 => Date.today,
+                  :column5 => 8208.9234.to_d, :column6 => 1973.35, :column7 => 'unicode 安装管理程序'},
                 {:column1 => nil, :column2 => nil, :column3 => nil, :column4 => nil,
                  :column5 => nil, :column6 => nil, :column7 => nil}]
 
