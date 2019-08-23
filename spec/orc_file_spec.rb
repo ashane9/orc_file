@@ -354,7 +354,7 @@ describe OrcFile do
       end
 
       it 'will write the single row to an orc file' do
-        expect(orc_file_writer.writer.number_of_rows).to eq 3
+        expect(orc_file_writer.writer.number_of_rows).to eq @data_set.size
         expect(File).to exist @orc_file_path
       end
     end
@@ -443,7 +443,7 @@ describe OrcFile do
       end
 
       it 'will read the row from an orc file' do
-        expect(@orc_file_reader.reader.number_of_rows).to eq 3
+        expect(@orc_file_reader.reader.number_of_rows).to eq @data_set.size
       end
 
     end
