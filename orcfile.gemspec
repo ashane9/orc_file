@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name = 'orcfile'
-  spec.version = '1.0.0'
+  spec.version = '1.0.1'
   spec.authors = ['Andrew Shane']
   spec.email = ['ashane9@gmail.com']
   spec.metadata['source_code_uri'] = 'https://github.com/ashane9/orc_file'
