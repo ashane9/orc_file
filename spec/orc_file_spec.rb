@@ -19,6 +19,8 @@ describe OrcFile do
                  :column5 => 1000.01.to_d, :column6 => 0.0005, :column7 => 'the string column'},
                 {:column1 => 52, :column2 => DateTime.now, :column3 => Time.now, :column4 => Date.today,
                  :column5 => 500.01.to_d, :column6 => 0.1005, :column7 => 'row 3'},
+                 {:column1 => 9714, :column2 => DateTime.now, :column3 => Time.now, :column4 => Date.today,
+                  :column5 => 8208.9234.to_d, :column6 => 1973.35, :column7 => 'unicode 安装管理程序'},
                 {:column1 => nil, :column2 => nil, :column3 => nil, :column4 => nil,
                  :column5 => nil, :column6 => nil, :column7 => nil}]
 
@@ -352,7 +354,7 @@ describe OrcFile do
       end
 
       it 'will write the single row to an orc file' do
-        expect(orc_file_writer.writer.number_of_rows).to eq 3
+        expect(orc_file_writer.writer.number_of_rows).to eq @data_set.size
         expect(File).to exist @orc_file_path
       end
     end
@@ -441,7 +443,7 @@ describe OrcFile do
       end
 
       it 'will read the row from an orc file' do
-        expect(@orc_file_reader.reader.number_of_rows).to eq 3
+        expect(@orc_file_reader.reader.number_of_rows).to eq @data_set.size
       end
 
     end
